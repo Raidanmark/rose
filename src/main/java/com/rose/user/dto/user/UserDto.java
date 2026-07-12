@@ -1,4 +1,4 @@
-package com.rose.user.dto;
+package com.rose.user.dto.user;
 
 import java.util.UUID;
 

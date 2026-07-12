@@ -3,13 +3,13 @@ package com.rose.user.service;
 import com.rose.common.exception.EmailAlreadyExistsException;
 import com.rose.common.exception.EntityNotFoundException;
 import com.rose.common.exception.UsernameAlreadyExistsException;
-import com.rose.user.dto.UpdateDto;
+import com.rose.user.dto.user.UpdateDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.rose.user.dto.CreateUserDto;
-import com.rose.user.dto.UserDto;
+import com.rose.user.dto.auth.RegisterRequest;
+import com.rose.user.dto.user.UserDto;
 import com.rose.user.entity.User;
 import com.rose.user.mapper.UserMapper;
 import com.rose.user.repository.UserRepository;
@@ -26,7 +26,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public UserDto createUser(CreateUserDto createUserDto) {
+    public UserDto createUser(RegisterRequest createUserDto) {
         String normalizedEmail = createUserDto.email().toLowerCase();
         String normalizedUsername = createUserDto.username().toLowerCase();
 
@@ -88,8 +88,13 @@ public class UserService {
         return userMapper.toDto(findUserById(id));
     }
 
-    private User findUserById(UUID id) {
+    public User findUserById(UUID id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+    }
+
+    public User findByEmail(String email) {
+        return userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
     }
 }
