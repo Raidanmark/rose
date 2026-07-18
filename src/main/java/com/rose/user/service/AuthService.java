@@ -22,6 +22,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
+    private final UserProfileService userProfileService;
 
     @Transactional
     public AuthResponse login(LoginRequest loginRequest) {
@@ -53,6 +54,7 @@ public class AuthService {
     @Transactional
     public RegisterResponse register(RegisterRequest registerRequest) {
         UserDto userDto = userService.createUser(registerRequest);
+        userProfileService.createUserProfile(userDto.id());
 
         String accessToken = jwtService.generateAccessToken(userDto.id(), userDto.email());
         String refreshToken = refreshTokenService.createRefreshToken(userService.findUserById(userDto.id()));
