@@ -1,9 +1,9 @@
-name: Deploy Dev
+name: Deploy Main
 
 on:
   push:
     branches:
-      - dev
+      - main
 
 jobs:
   deploy-dev:
@@ -52,4 +52,4 @@ jobs:
             docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
             docker compose pull
             docker compose up -d
-            docker image prune -foy production from main"
+            docker image prune -f
