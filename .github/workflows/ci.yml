@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      JWT_SECRET: test-jwt-secret-test-jwt-secret-test-jwt-secret-123456
+      JWT_ACCESS_TOKEN_EXPIRATION_MINUTES: 15
+      JWT_REFRESH_TOKEN_EXPIRATION_DAYS: 30
+      SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: ""
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Make Gradle executable
+        run: chmod +x ./gradlew
+
+      - name: Run tests
+        run: ./gradlew clean test
+
+      - name: Build project
+        run: ./gradlew build
