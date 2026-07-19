@@ -25,7 +25,7 @@ public class UserProfile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(nullable = false, updatable = false)
+    @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
     @OneToOne(fetch = FetchType.LAZY)

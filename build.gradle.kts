@@ -30,6 +30,11 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     /**
+     * Payments
+     */
+    implementation("com.stripe:stripe-java:33.1.0")
+
+    /**
      * Database
      */
     runtimeOnly("org.postgresql:postgresql")
