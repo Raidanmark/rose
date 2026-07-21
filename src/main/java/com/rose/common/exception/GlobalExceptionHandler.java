@@ -1,11 +1,13 @@
 package com.rose.common.exception;
 
+import com.rose.common.exception.donation.DonationAccessDeniedException;
 import com.rose.common.exception.donation.SelfDonationNotAllowedException;
 import com.rose.common.exception.donation.UserCannotReceiveDonationsException;
 import com.rose.common.exception.payment.stripe.ConnectedStripeAccountRetrieveAccountException;
 import com.rose.common.exception.payment.stripe.StripeIntegrationException;
 import com.rose.common.exception.payment.stripe.StripeOnboardingLinkCreationException;
 import com.rose.common.exception.payment.stripe.UserPaymentAccountNotFoundException;
+import com.rose.common.exception.stripe.InvalidStripeSignatureException;
 import com.rose.common.exception.user.EmailAlreadyExistsException;
 import com.rose.common.exception.user.UsernameAlreadyExistsException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -136,6 +138,31 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(InvalidStripeSignatureException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidStripeSignatureException(
+            InvalidStripeSignatureException exception,
+            HttpServletRequest request
+    ) {
+        log.error("Invalid Stripe signature: path={}, message={}", request.getRequestURI(), exception.getMessage(), exception);
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                "Invalid Stripe signature. Please check the webhook configuration.",
+                request
+        );
+    }
+
+    @ExceptionHandler(DonationAccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleDonationAccessDeniedException(
+            DonationAccessDeniedException exception,
+            HttpServletRequest request
+    ) {
+        log.warn("Donation access denied: path={}, message={}", request.getRequestURI(), exception.getMessage());
+        return buildResponse(
+                HttpStatus.FORBIDDEN,
+                exception.getMessage(),
+                request
+        );
+    }
 
 
     private ResponseEntity<ErrorResponse> buildResponse(

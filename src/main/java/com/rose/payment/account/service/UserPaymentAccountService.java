@@ -58,6 +58,27 @@ public class UserPaymentAccountService {
         return account;
     }
 
+    @Transactional
+    public void synchronizeFromWebhook(
+            String providerAccountId,
+            boolean chargesEnabled,
+            boolean payoutsEnabled,
+            boolean disabled
+    ) {
+        UserPaymentAccount account = userPaymentAccountRepository
+                .findByProviderAndProviderAccountId(
+                        PaymentProvider.STRIPE,
+                        providerAccountId
+                )
+                .orElseThrow(
+                        () -> new EntityNotFoundException(
+                                "UserPaymentAccount not found for providerAccountId: " + providerAccountId
+                        )
+                );
+
+        account.synchronize(chargesEnabled, payoutsEnabled, disabled);
+    }
+
     private void synchronizeFromStripe(UserPaymentAccount paymentAccount) {
         StripeConnectedAccountSnapshot snapshot = stripeConnectGateway.retrieveAccount(
                 paymentAccount.getProviderAccountId());
