@@ -50,7 +50,13 @@ public class UserService {
         if (savedUser.getId() == null) {
             throw new IllegalStateException("User ID was not generated after saving");
         }
-        return userMapper.toDto(savedUser);
+
+        return new UserDto(
+                savedUser.getId(),
+                savedUser.getUsername(),
+                savedUser.getEmail()
+        );
+
     }
 
     @Transactional
