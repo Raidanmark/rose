@@ -28,7 +28,7 @@ public class SecurityConfig {
                                 "/v3/api-docs/**"
                         ).permitAll()
 
-                        .requestMatchers("/user/create").permitAll()
+                        .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/auth/refresh").permitAll()
                         .anyRequest().authenticated()
