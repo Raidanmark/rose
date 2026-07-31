@@ -46,7 +46,10 @@ public class UserService {
                 passwordHash
         );
 
-        User savedUser = userRepository.save(user);
+        User savedUser = userRepository.saveAndFlush(user);
+        if (savedUser.getId() == null) {
+            throw new IllegalStateException("User ID was not generated after saving");
+        }
         return userMapper.toDto(savedUser);
     }
 
