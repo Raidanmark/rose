@@ -77,13 +77,40 @@ jobs:
             echo "=== IMAGES ==="
             docker compose images
 
-            echo "=== LOGS ==="
-            sleep 10
-            docker compose logs --tail=300
+            echo "=== WAIT FOR APP ==="
+            APP_READY=false
+
+            for i in $(seq 1 30); do
+              HTTP_CODE=$(curl -sS \
+                --max-time 3 \
+                -o /dev/null \
+                -w "%{http_code}" \
+                http://localhost:8081/swagger-ui/index.html \
+                || true)
+
+              if [ "$HTTP_CODE" != "000" ]; then
+                echo "Application is responding with HTTP $HTTP_CODE"
+                APP_READY=true
+                break
+              fi
+
+              echo "Waiting for application... attempt $i/30"
+              sleep 2
+            done
+
+            if [ "$APP_READY" != "true" ]; then
+              echo "Application did not start in time"
+              docker compose logs --tail=300
+              exit 1
+            fi
 
             echo "=== REGISTER TEST ==="
-            curl -i -X POST http://localhost:8081/auth/register \
+            curl -i \
+              --max-time 20 \
+              -X POST http://localhost:8081/auth/register \
               -H "Content-Type: application/json" \
-              -d '{"username":"deploy-test-123","email":"deploy-test-123@example.com","password":"password123"}'
+              -d "{\"username\":\"deploy-test-${{ github.run_id }}\",\"email\":\"deploy-${{ github.run_id }}@example.com\",\"password\":\"password123\"}" \
+              || true
 
-        
+            echo "=== LOGS AFTER REQUEST ==="
+            docker compose logs --tail=300
