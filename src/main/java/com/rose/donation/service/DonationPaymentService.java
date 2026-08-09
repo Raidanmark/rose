@@ -7,8 +7,8 @@ import com.rose.donation.entity.Donation;
 import com.rose.donation.repository.DonationRepository;
 import com.rose.payment.account.entity.UserPaymentAccount;
 import com.rose.payment.account.service.UserPaymentAccountService;
-import com.rose.payment.stripe.payment.StripePaymentGateway;
-import com.rose.payment.stripe.payment.StripePaymentResult;
+import com.rose.payment.processing.PaymentGateway;
+import com.rose.payment.processing.PaymentResult;
 import com.rose.user.entity.User;
 import com.rose.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class DonationPaymentService {
     private final UserService userService;
     private final UserPaymentAccountService paymentAccountService;
     private final DonationRepository donationRepository;
-    private final StripePaymentGateway stripePaymentGateway;
+    private final PaymentGateway stripePaymentGateway;
 
     @Transactional
     public CreateDonationResponse createDonation(
@@ -45,7 +45,7 @@ public class DonationPaymentService {
 
         donationRepository.saveAndFlush(donation);
 
-        StripePaymentResult paymentResult = stripePaymentGateway.createPaymentIntent(
+        PaymentResult paymentResult = stripePaymentGateway.createPaymentIntent(
                 donation,
                 paymentAccount.getProviderAccountId()
         );

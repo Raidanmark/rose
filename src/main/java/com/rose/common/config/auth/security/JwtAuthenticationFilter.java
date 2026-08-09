@@ -2,7 +2,7 @@ package com.rose.common.config.auth.security;
 
 import com.rose.user.entity.User;
 import com.rose.user.repository.UserRepository;
-import com.rose.user.service.jwt.JwtService;
+import com.rose.user.auth.service.jwt.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

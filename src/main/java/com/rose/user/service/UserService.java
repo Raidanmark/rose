@@ -3,13 +3,13 @@ package com.rose.user.service;
 import com.rose.common.exception.user.EmailAlreadyExistsException;
 import com.rose.common.exception.EntityNotFoundException;
 import com.rose.common.exception.user.UsernameAlreadyExistsException;
-import com.rose.user.dto.user.UpdateDto;
+import com.rose.user.dto.UpdateRequest;
+import com.rose.user.dto.UserResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.rose.user.dto.auth.RegisterRequest;
-import com.rose.user.dto.user.UserDto;
+import com.rose.user.auth.dto.RegisterRequest;
 import com.rose.user.entity.User;
 import com.rose.user.mapper.UserMapper;
 import com.rose.user.repository.UserRepository;
@@ -26,7 +26,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public UserDto createUser(RegisterRequest createUserDto) {
+    public UserResponse createUser(RegisterRequest createUserDto) {
         String normalizedEmail = createUserDto.email().toLowerCase();
         String normalizedUsername = createUserDto.username().trim().toLowerCase();
 
@@ -49,7 +49,7 @@ public class UserService {
             throw new IllegalStateException("User ID was not generated after saving");
         }
 
-        return new UserDto(
+        return new UserResponse(
                 savedUser.getId(),
                 savedUser.getUsername(),
                 savedUser.getEmail()
@@ -64,7 +64,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDto update(UUID id, UpdateDto updateDto) {
+    public UserResponse update(UUID id, UpdateRequest updateDto) {
         User user = findUserById(id);
 
         if (updateDto.username() != null && !updateDto.username().isBlank()) {
@@ -92,7 +92,7 @@ public class UserService {
         return userMapper.toDto(updatedUser);
     }
 
-    public UserDto getUserById(UUID id) {
+    public UserResponse getUserById(UUID id) {
         return userMapper.toDto(findUserById(id));
     }
 
