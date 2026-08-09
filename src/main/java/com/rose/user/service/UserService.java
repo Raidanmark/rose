@@ -1,8 +1,8 @@
 package com.rose.user.service;
 
-import com.rose.common.exception.EmailAlreadyExistsException;
+import com.rose.common.exception.user.EmailAlreadyExistsException;
 import com.rose.common.exception.EntityNotFoundException;
-import com.rose.common.exception.UsernameAlreadyExistsException;
+import com.rose.common.exception.user.UsernameAlreadyExistsException;
 import com.rose.user.dto.user.UpdateDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,15 +28,13 @@ public class UserService {
     @Transactional
     public UserDto createUser(RegisterRequest createUserDto) {
         String normalizedEmail = createUserDto.email().toLowerCase();
-        String normalizedUsername = createUserDto.username().toLowerCase();
+        String normalizedUsername = createUserDto.username().trim().toLowerCase();
 
         if (userRepository.existsByEmail(normalizedEmail)) {
             throw new EmailAlreadyExistsException(normalizedEmail);
         }
 
-        if (userRepository.existsByUsername(normalizedUsername)) {
-            throw new UsernameAlreadyExistsException(normalizedUsername);
-        }
+        validateUsernameIsAvailable(normalizedUsername);
 
         String passwordHash = passwordEncoder.encode(createUserDto.password());
 
@@ -65,6 +63,7 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    @Transactional
     public UserDto update(UUID id, UpdateDto updateDto) {
         User user = findUserById(id);
 
@@ -105,5 +104,11 @@ public class UserService {
     public User findByEmail(String email) {
         return userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
+    }
+
+    public void validateUsernameIsAvailable(String username) {
+        if (userRepository.existsByUsername(username)) {
+            throw new UsernameAlreadyExistsException(username);
+        }
     }
 }
