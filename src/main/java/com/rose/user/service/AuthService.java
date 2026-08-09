@@ -1,10 +1,9 @@
 package com.rose.user.service;
 
 import com.rose.user.dto.auth.AuthResponse;
+import com.rose.user.dto.auth.AuthTokens;
 import com.rose.user.dto.auth.LoginRequest;
-import com.rose.user.dto.auth.RefreshRequest;
 import com.rose.user.dto.auth.RegisterRequest;
-import com.rose.user.dto.auth.RegisterResponse;
 import com.rose.user.dto.user.UserDto;
 import com.rose.user.entity.User;
 import com.rose.user.service.jwt.JwtService;
@@ -27,7 +26,7 @@ public class AuthService {
     private final UserProfileService userProfileService;
 
     @Transactional
-    public AuthResponse login(LoginRequest loginRequest) {
+    public AuthTokens login(LoginRequest loginRequest) {
         String normalizedEmail = loginRequest.email()
                 .trim()
                 .toLowerCase();
@@ -41,27 +40,23 @@ public class AuthService {
         String accessToken = jwtService.generateAccessToken(user.getId(), user.getEmail());
         String refreshToken = refreshTokenService.createRefreshToken(user);
 
-        return AuthResponse.bearer(accessToken, refreshToken);
+        return new AuthTokens(accessToken, refreshToken);
     }
 
     @Transactional
-    public AuthResponse refresh(RefreshRequest refreshRequest) {
-        User user = refreshTokenService.validateRefreshToken(refreshRequest.refreshToken());
+    public AuthResponse refresh(String refreshToken) {
+        User user = refreshTokenService.validateRefreshToken(refreshToken);
 
        String newAccessToken = jwtService.generateAccessToken(user.getId(), user.getEmail());
 
-        return AuthResponse.bearer(newAccessToken, refreshRequest.refreshToken());
+        return AuthResponse.bearer(newAccessToken);
     }
 
     @Transactional
-    public RegisterResponse register(RegisterRequest registerRequest) {
+    public UserDto register(RegisterRequest registerRequest) {
         UserDto userDto = userService.createUser(registerRequest);
         userProfileService.createUserProfile(userDto.id());
 
-        log.info("User id = ", userDto.id());
-        String accessToken = jwtService.generateAccessToken(userDto.id(), userDto.email());
-        String refreshToken = refreshTokenService.createRefreshToken(userService.findUserById(userDto.id()));
-
-        return new RegisterResponse(AuthResponse.bearer(accessToken, refreshToken), userDto);
+        return userDto;
     }
 }
