@@ -10,10 +10,12 @@ import com.rose.user.entity.User;
 import com.rose.user.service.jwt.JwtService;
 import com.rose.user.service.jwt.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -56,6 +58,7 @@ public class AuthService {
         UserDto userDto = userService.createUser(registerRequest);
         userProfileService.createUserProfile(userDto.id());
 
+        log.info("User id = ", userDto.id());
         String accessToken = jwtService.generateAccessToken(userDto.id(), userDto.email());
         String refreshToken = refreshTokenService.createRefreshToken(userService.findUserById(userDto.id()));
 
