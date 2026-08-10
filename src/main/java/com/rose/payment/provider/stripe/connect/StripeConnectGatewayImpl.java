@@ -1,8 +1,8 @@
 package com.rose.payment.provider.stripe.connect;
 
-import com.rose.common.exception.payment.stripe.StripeIntegrationException;
-import com.rose.common.exception.payment.stripe.StripeOnboardingLinkCreationException;
 import com.rose.payment.provider.stripe.config.StripeProperties;
+import com.rose.payment.provider.stripe.exception.StripeIntegrationException;
+import com.rose.payment.provider.stripe.exception.StripeOnboardingLinkCreationException;
 import com.rose.user.entity.User;
 import com.stripe.StripeClient;
 import com.stripe.exception.StripeException;

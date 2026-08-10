@@ -1,9 +1,9 @@
 package com.rose.payment.provider.stripe.payment;
 
-import com.rose.common.exception.payment.stripe.StripeIntegrationException;
 import com.rose.donation.entity.Donation;
 import com.rose.payment.processing.PaymentGateway;
 import com.rose.payment.processing.PaymentResult;
+import com.rose.payment.provider.stripe.exception.StripeIntegrationException;
 import com.stripe.StripeClient;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;

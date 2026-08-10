@@ -1,11 +1,11 @@
 package com.rose.payment.provider.stripe.webhook.service;
 
-import com.rose.common.exception.stripe.InvalidStripeSignatureException;
 import com.rose.donation.service.DonationService;
 import com.rose.payment.account.service.UserPaymentAccountService;
 import com.rose.payment.provider.stripe.config.StripeProperties;
 import com.rose.payment.provider.stripe.connect.StripeConnectGatewayImpl;
 import com.rose.payment.provider.stripe.connect.StripeConnectedAccountSnapshot;
+import com.rose.payment.provider.stripe.exception.InvalidStripeSignatureException;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Account;
 import com.stripe.model.PaymentIntent;
