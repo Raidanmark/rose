@@ -1,4 +1,4 @@
-package com.rose.common.exception.donation;
+package com.rose.donation.exception;
 
 public class DonationAccessDeniedException extends RuntimeException {
     public DonationAccessDeniedException() {

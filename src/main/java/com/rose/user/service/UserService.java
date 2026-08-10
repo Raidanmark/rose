@@ -1,8 +1,8 @@
 package com.rose.user.service;
 
-import com.rose.common.exception.user.EmailAlreadyExistsException;
+import com.rose.user.exception.EmailAlreadyExistsException;
 import com.rose.common.exception.EntityNotFoundException;
-import com.rose.common.exception.user.UsernameAlreadyExistsException;
+import com.rose.user.exception.UsernameAlreadyExistsException;
 import com.rose.user.dto.UpdateRequest;
 import com.rose.user.dto.UserResponse;
 import lombok.RequiredArgsConstructor;

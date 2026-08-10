@@ -1,4 +1,4 @@
-package com.rose.common.exception.donation;
+package com.rose.donation.exception;
 
 public class UserCannotReceiveDonationsException extends RuntimeException {
     public UserCannotReceiveDonationsException() {

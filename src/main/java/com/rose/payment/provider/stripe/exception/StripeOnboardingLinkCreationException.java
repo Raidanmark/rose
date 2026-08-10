@@ -1,4 +1,4 @@
-package com.rose.common.exception.payment.stripe;
+package com.rose.payment.provider.stripe.exception;
 
 import com.stripe.exception.StripeException;
 

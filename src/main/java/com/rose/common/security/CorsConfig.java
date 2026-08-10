@@ -1,4 +1,4 @@
-package com.rose.common.config.auth.security;
+package com.rose.common.security;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

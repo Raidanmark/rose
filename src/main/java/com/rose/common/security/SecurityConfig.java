@@ -1,4 +1,4 @@
-package com.rose.common.config.auth.security;
+package com.rose.common.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

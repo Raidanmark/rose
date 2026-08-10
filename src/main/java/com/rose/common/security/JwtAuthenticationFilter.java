@@ -1,4 +1,4 @@
-package com.rose.common.config.auth.security;
+package com.rose.common.security;
 
 import com.rose.user.entity.User;
 import com.rose.user.repository.UserRepository;

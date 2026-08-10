@@ -1,4 +1,4 @@
-package com.rose.common.exception.user;
+package com.rose.user.exception;
 
 public class UsernameAlreadyExistsException extends RuntimeException {
     public UsernameAlreadyExistsException(String username) {

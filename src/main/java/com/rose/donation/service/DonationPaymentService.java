@@ -1,6 +1,6 @@
 package com.rose.donation.service;
 
-import com.rose.common.exception.donation.SelfDonationNotAllowedException;
+import com.rose.donation.exception.SelfDonationNotAllowedException;
 import com.rose.donation.dto.CreateDonationRequest;
 import com.rose.donation.dto.CreateDonationResponse;
 import com.rose.donation.entity.Donation;

@@ -1,4 +1,4 @@
-package com.rose.common.exception.user;
+package com.rose.user.exception;
 
 public class EmailAlreadyExistsException extends RuntimeException {
     public EmailAlreadyExistsException(String email) {

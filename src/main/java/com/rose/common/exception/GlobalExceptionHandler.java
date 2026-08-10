@@ -1,15 +1,15 @@
 package com.rose.common.exception;
 
-import com.rose.common.exception.donation.DonationAccessDeniedException;
-import com.rose.common.exception.donation.SelfDonationNotAllowedException;
-import com.rose.common.exception.donation.UserCannotReceiveDonationsException;
-import com.rose.common.exception.payment.stripe.ConnectedStripeAccountRetrieveAccountException;
-import com.rose.common.exception.payment.stripe.StripeIntegrationException;
-import com.rose.common.exception.payment.stripe.StripeOnboardingLinkCreationException;
-import com.rose.common.exception.payment.stripe.UserPaymentAccountNotFoundException;
-import com.rose.common.exception.stripe.InvalidStripeSignatureException;
-import com.rose.common.exception.user.EmailAlreadyExistsException;
-import com.rose.common.exception.user.UsernameAlreadyExistsException;
+import com.rose.donation.exception.DonationAccessDeniedException;
+import com.rose.donation.exception.SelfDonationNotAllowedException;
+import com.rose.donation.exception.UserCannotReceiveDonationsException;
+import com.rose.payment.provider.stripe.exception.ConnectedStripeAccountRetrieveAccountException;
+import com.rose.payment.provider.stripe.exception.StripeIntegrationException;
+import com.rose.payment.provider.stripe.exception.StripeOnboardingLinkCreationException;
+import com.rose.payment.account.exception.UserPaymentAccountNotFoundException;
+import com.rose.payment.provider.stripe.exception.InvalidStripeSignatureException;
+import com.rose.user.exception.EmailAlreadyExistsException;
+import com.rose.user.exception.UsernameAlreadyExistsException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

@@ -1,7 +1,7 @@
 package com.rose.payment.account.service;
 
 import com.rose.common.exception.EntityNotFoundException;
-import com.rose.common.exception.donation.UserCannotReceiveDonationsException;
+import com.rose.donation.exception.UserCannotReceiveDonationsException;
 import com.rose.payment.PaymentProvider;
 import com.rose.payment.account.dto.UserOnboardingResponse;
 import com.rose.payment.account.entity.UserPaymentAccount;
