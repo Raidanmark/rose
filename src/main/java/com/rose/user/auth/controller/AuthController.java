@@ -1,18 +1,15 @@
 package com.rose.user.auth.controller;
 
 import com.rose.user.auth.dto.AuthResponse;
-import com.rose.user.auth.dto.AuthTokens;
+import com.rose.user.auth.dto.LoginDto;
 import com.rose.user.auth.dto.LoginRequest;
+import com.rose.user.auth.dto.LoginResponse;
 import com.rose.user.auth.dto.RegisterRequest;
-import com.rose.user.auth.dto.RegisterResponse;
 import com.rose.user.auth.service.AuthService;
-import com.rose.user.dto.UserResponse;
-import com.rose.user.auth.service.jwt.RefreshTokenCookieService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,22 +23,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
-    private final RefreshTokenCookieService refreshTokenCookieService;
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
 
-        AuthTokens authTokens = authService.login(loginRequest);
-
-        ResponseCookie refreshCookie = refreshTokenCookieService.create(authTokens.refreshToken());
+        LoginDto loginDto = authService.login(loginRequest);
 
         return ResponseEntity.ok()
                 .header(
                         HttpHeaders.SET_COOKIE,
-                        refreshCookie.toString()
+                        loginDto.refreshToken()
                 )
                 .body(
-                        AuthResponse.bearer(authTokens.accessToken())
+                        loginDto.loginResponse()
                 );
     }
 
@@ -51,27 +45,21 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<LoginResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
 
-        UserResponse userDto = authService.register(registerRequest);
+        authService.register(registerRequest);
 
-        //Bad practice:
-        AuthTokens authTokens = authService.login(new LoginRequest(registerRequest.email(), registerRequest.password()));
-
-        ResponseCookie refreshCookie = refreshTokenCookieService.create(authTokens.refreshToken());
-
-        RegisterResponse registerResponse = new RegisterResponse(
-                AuthResponse.bearer(authTokens.accessToken()),
-                userDto
-        );
+        //Automatically log in the user after registration
+        LoginRequest loginRequest = new LoginRequest(registerRequest.email(), registerRequest.password());
+        LoginDto loginDto = authService.login(loginRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(
                         HttpHeaders.SET_COOKIE,
-                        refreshCookie.toString()
+                        loginDto.refreshToken()
                 )
                 .body(
-                        registerResponse
+                        loginDto.loginResponse()
                 );
     }
 }

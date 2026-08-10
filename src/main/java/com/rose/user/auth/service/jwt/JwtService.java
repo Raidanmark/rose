@@ -36,7 +36,6 @@ public class JwtService {
         return Jwts.builder()
                 .subject(userId.toString())
                 .claim("email", email)
-                .setIssuedAt(now)
                 .expiration(new Date(now.getTime() + accessTokenExpirationMillis))
                 .signWith(secretKey)
                 .compact();

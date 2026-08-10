@@ -2,7 +2,9 @@ package com.rose.user.auth.service;
 
 import com.rose.user.auth.dto.AuthResponse;
 import com.rose.user.auth.dto.AuthTokens;
+import com.rose.user.auth.dto.LoginDto;
 import com.rose.user.auth.dto.LoginRequest;
+import com.rose.user.auth.dto.LoginResponse;
 import com.rose.user.auth.dto.RegisterRequest;
 import com.rose.user.dto.UserResponse;
 import com.rose.user.entity.User;
@@ -28,7 +30,8 @@ public class AuthService {
     private final ProfileService userProfileService;
 
     @Transactional
-    public AuthTokens login(LoginRequest loginRequest) {
+    public LoginDto login(LoginRequest loginRequest) {
+
         String normalizedEmail = loginRequest.email()
                 .trim()
                 .toLowerCase();
@@ -41,24 +44,25 @@ public class AuthService {
 
         String accessToken = jwtService.generateAccessToken(user.getId(), user.getEmail());
         String refreshToken = refreshTokenService.createRefreshToken(user);
+        AuthResponse authResponse = AuthResponse.bearer(accessToken);
+        UserResponse userResponse = userService.getUserById(user.getId());
+        LoginResponse loginResponse = new LoginResponse(authResponse, userResponse);
 
-        return new AuthTokens(accessToken, refreshToken);
+        return new LoginDto(loginResponse, refreshToken);
     }
 
     @Transactional
     public AuthResponse refresh(String refreshToken) {
-        User user = refreshTokenService.validateRefreshToken(refreshToken);
 
-       String newAccessToken = jwtService.generateAccessToken(user.getId(), user.getEmail());
+        User user = refreshTokenService.validateRefreshToken(refreshToken);
+        String newAccessToken = jwtService.generateAccessToken(user.getId(), user.getEmail());
 
         return AuthResponse.bearer(newAccessToken);
     }
 
     @Transactional
-    public UserResponse register(RegisterRequest registerRequest) {
+    public void register(RegisterRequest registerRequest) {
         UserResponse userDto = userService.createUser(registerRequest);
         userProfileService.createUserProfile(userDto.id());
-
-        return userDto;
     }
 }
