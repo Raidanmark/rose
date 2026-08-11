@@ -6,6 +6,7 @@ import com.rose.payment.provider.stripe.config.StripeProperties;
 import com.rose.payment.provider.stripe.connect.StripeConnectGatewayImpl;
 import com.rose.payment.provider.stripe.connect.StripeConnectedAccountSnapshot;
 import com.rose.payment.provider.stripe.exception.InvalidStripeSignatureException;
+import com.rose.payment.provider.stripe.webhook.repository.StripeWebhookEventRepository;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Account;
 import com.stripe.model.PaymentIntent;
@@ -14,6 +15,7 @@ import com.stripe.net.Webhook;
 import com.stripe.model.Event;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,9 +25,24 @@ public class StripeWebhookService {
     private final UserPaymentAccountService paymentAccountService;
     private final DonationService donationService;
     private final StripeConnectGatewayImpl stripeConnectGateway;
+    private final StripeWebhookEventRepository stripeWebhookEventRepository;
 
+    @Transactional
     public void handle(String payload, String signature) {
         Event event = constructEvent(payload, signature);
+
+        if (!isSupportedEvent(event.getType())) {
+            return;
+        }
+
+        int claimed = stripeWebhookEventRepository.claimEvent(
+                event.getId(),
+                event.getType()
+        );
+
+        if (claimed == 0) {
+            return;
+        }
 
         switch (event.getType()) {
             case "account.updated" ->
@@ -43,6 +60,19 @@ public class StripeWebhookService {
             default -> {
             }
         }
+    }
+
+    private boolean isSupportedEvent(
+            String eventType
+    ) {
+        return switch (eventType) {
+            case "account.updated",
+                 "payment_intent.succeeded",
+                 "payment_intent.payment_failed",
+                 "payment_intent.canceled" -> true;
+
+            default -> false;
+        };
     }
 
     private Event constructEvent(
