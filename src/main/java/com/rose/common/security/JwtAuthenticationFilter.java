@@ -3,6 +3,8 @@ package com.rose.common.security;
 import com.rose.user.entity.User;
 import com.rose.user.repository.UserRepository;
 import com.rose.user.auth.service.jwt.JwtService;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -63,8 +65,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
-        } catch (Exception ignored) {
-            // Invalid token. Do not authenticate request.
+        } catch (ExpiredJwtException e) {
+
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("""
+        {
+          "error": "ACCESS_TOKEN_EXPIRED"
+        }
+        """);
+
+            return;
+
+        } catch (JwtException | IllegalArgumentException e) {
+
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("""
+        {
+          "error": "INVALID_ACCESS_TOKEN"
+        }
+        """);
+
+            return;
         }
 
         filterChain.doFilter(request, response);

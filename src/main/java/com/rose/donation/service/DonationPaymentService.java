@@ -13,7 +13,6 @@ import com.rose.user.entity.User;
 import com.rose.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,9 +21,9 @@ public class DonationPaymentService {
     private final UserService userService;
     private final UserPaymentAccountService paymentAccountService;
     private final DonationRepository donationRepository;
-    private final PaymentGateway stripePaymentGateway;
+    private final PaymentGateway paymentGateway;
+    private final DonationPersistenceService donationPersistenceService;
 
-    @Transactional
     public CreateDonationResponse createDonation(
             User sender,
             CreateDonationRequest createDonationRequest
@@ -43,14 +42,15 @@ public class DonationPaymentService {
                 createDonationRequest.message()
         );
 
-        donationRepository.saveAndFlush(donation);
+        donation = donationPersistenceService.save(donation);
 
-        PaymentResult paymentResult = stripePaymentGateway.createPaymentIntent(
+        PaymentResult paymentResult = paymentGateway.createPaymentIntent(
                 donation,
                 paymentAccount.getProviderAccountId()
         );
 
-        donation.attachProviderPayment(
+        donationPersistenceService.attachProviderPayment(
+                donation.getId(),
                 paymentResult.paymentIntentId()
         );
 

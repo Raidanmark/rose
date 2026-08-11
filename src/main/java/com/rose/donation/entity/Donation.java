@@ -18,7 +18,6 @@ import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -153,7 +152,10 @@ public class Donation {
             return;
         }
 
-        requirePending();
+        if (status == DonationStatus.CANCELED) {
+            return;
+        }
+
         status = DonationStatus.SUCCEEDED;
     }
 
@@ -162,7 +164,10 @@ public class Donation {
             return;
         }
 
-        requirePending();
+        if (status == DonationStatus.CANCELED || status == DonationStatus.SUCCEEDED) {
+            return;
+        }
+
         status = DonationStatus.FAILED;
     }
 
@@ -171,16 +176,11 @@ public class Donation {
             return;
         }
 
-        requirePending();
-        status = DonationStatus.CANCELED;
-    }
-
-    private void requirePending() {
-        if (status != DonationStatus.PENDING) {
-            throw new IllegalStateException(
-                    "Donation status transition is not allowed: " + status
-            );
+        if (status == DonationStatus.SUCCEEDED) {
+            return;
         }
+
+        status = DonationStatus.CANCELED;
     }
 
     private static BigDecimal validateAmount(BigDecimal amount) {
