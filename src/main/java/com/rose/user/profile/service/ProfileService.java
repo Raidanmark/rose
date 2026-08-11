@@ -29,11 +29,13 @@ public class ProfileService {
         userProfileRepository.save(userProfile);
     }
 
+    @Transactional(readOnly = true)
     public ProfileResponse getMyUserProfile(User user) {
         Profile profile = findUserProfileById(user.getId());
         return userProfileMapper.toDto(profile);
     }
 
+    @Transactional(readOnly = true)
     public PublicProfileResponse getUserProfileById(UUID userId) {
         Profile profile = findUserProfileById(userId);
         return userProfileMapper.toPublicDto(profile);
