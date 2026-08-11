@@ -106,7 +106,7 @@ public class UserPaymentAccountService {
     }
 
     private UserPaymentAccount findOrCreatePaymentAccount(User user) {
-        return userPaymentAccountRepository.findById(user.getId())
+        return userPaymentAccountRepository.findByUserId(user.getId())
                 .orElseGet(() -> createPaymentAccountForUser(user));
     }
 }
