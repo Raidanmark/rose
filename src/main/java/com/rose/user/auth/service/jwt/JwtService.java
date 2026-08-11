@@ -41,10 +41,6 @@ public class JwtService {
                 .compact();
     }
 
-    public UUID getUserIdFromToken(String token) {
-        return UUID.fromString(extractClaims(token).getSubject());
-    }
-
     public boolean isTokenValid(String token) {
         return extractClaims(token)
                 .getExpiration()
