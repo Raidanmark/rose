@@ -19,6 +19,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -99,6 +101,7 @@ public class Donation {
     @Column(name = "provider_payment_id", length = 255)
     private String providerPaymentId;
 
+    @CreationTimestamp
     @Column(
             name = "created_at",
             nullable = false,
@@ -106,6 +109,7 @@ public class Donation {
     )
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
     @Column(
             name = "updated_at",
             nullable = false

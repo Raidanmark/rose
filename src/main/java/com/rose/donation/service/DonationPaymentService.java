@@ -50,6 +50,10 @@ public class DonationPaymentService {
                 paymentAccount.getProviderAccountId()
         );
 
+        donation.attachProviderPayment(
+                paymentResult.paymentIntentId()
+        );
+
         return new CreateDonationResponse(
                 donation.getId(),
                 donation.getStatus(),
