@@ -1,7 +1,7 @@
 package com.rose.donation.service;
 
 import com.rose.common.exception.EntityNotFoundException;
-import com.rose.common.exception.donation.DonationAccessDeniedException;
+import com.rose.donation.exception.DonationAccessDeniedException;
 import com.rose.donation.dto.DonationResponse;
 import com.rose.donation.entity.Donation;
 import com.rose.donation.mapper.DonationMapper;

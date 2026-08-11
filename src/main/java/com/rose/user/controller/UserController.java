@@ -1,6 +1,7 @@
 package com.rose.user.controller;
 
-import com.rose.user.dto.user.UpdateDto;
+import com.rose.user.dto.UpdateRequest;
+import com.rose.user.dto.UserResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.rose.user.dto.user.UserDto;
 import com.rose.user.service.UserService;
 
 import java.util.UUID;
@@ -33,14 +33,14 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable UUID id) {
-        UserDto user = userService.getUserById(id);
+    public ResponseEntity<UserResponse> getUserById(@PathVariable UUID id) {
+        UserResponse user = userService.getUserById(id);
         return ResponseEntity.ok(user);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable UUID id,
-                                              @Valid @RequestBody UpdateDto updateDto) {
+    public ResponseEntity<UserResponse> updateUser(@PathVariable UUID id,
+                                                   @Valid @RequestBody UpdateRequest updateDto) {
         return ResponseEntity.ok(userService.update(id, updateDto));
     }
 }

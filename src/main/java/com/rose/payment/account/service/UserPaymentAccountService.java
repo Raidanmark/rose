@@ -1,13 +1,13 @@
 package com.rose.payment.account.service;
 
 import com.rose.common.exception.EntityNotFoundException;
-import com.rose.common.exception.donation.UserCannotReceiveDonationsException;
+import com.rose.donation.exception.UserCannotReceiveDonationsException;
 import com.rose.payment.PaymentProvider;
 import com.rose.payment.account.dto.UserOnboardingResponse;
 import com.rose.payment.account.entity.UserPaymentAccount;
 import com.rose.payment.account.repository.UserPaymentAccountRepository;
-import com.rose.payment.stripe.connect.StripeConnectGateway;
-import com.rose.payment.stripe.connect.StripeConnectedAccountSnapshot;
+import com.rose.payment.provider.stripe.connect.StripeConnectGateway;
+import com.rose.payment.provider.stripe.connect.StripeConnectedAccountSnapshot;
 import com.rose.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -106,7 +106,7 @@ public class UserPaymentAccountService {
     }
 
     private UserPaymentAccount findOrCreatePaymentAccount(User user) {
-        return userPaymentAccountRepository.findById(user.getId())
+        return userPaymentAccountRepository.findByUserId(user.getId())
                 .orElseGet(() -> createPaymentAccountForUser(user));
     }
 }
