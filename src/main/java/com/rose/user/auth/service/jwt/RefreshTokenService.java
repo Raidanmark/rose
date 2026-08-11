@@ -1,6 +1,8 @@
 package com.rose.user.auth.service.jwt;
 
 import com.rose.user.auth.entity.RefreshToken;
+import com.rose.user.auth.exception.InvalidRefreshTokenException;
+import com.rose.user.auth.exception.RefreshTokenExpiredException;
 import com.rose.user.entity.User;
 import com.rose.user.auth.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
@@ -40,10 +42,10 @@ public class RefreshTokenService {
         String tokenHash = tokenHashService.sha256(rawToken);
 
         RefreshToken refreshToken = refreshTokenRepository.findByTokenHash(tokenHash)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid refresh token"));
+                .orElseThrow(() -> new InvalidRefreshTokenException("Invalid refresh token"));
 
         if (refreshToken.isExpired() || refreshToken.isRevoked()) {
-            throw new IllegalArgumentException("Refresh token has expired");
+            throw new RefreshTokenExpiredException("Refresh token has expired");
         }
 
         return refreshToken.getUser();

@@ -8,6 +8,8 @@ import com.rose.payment.provider.stripe.exception.StripeIntegrationException;
 import com.rose.payment.provider.stripe.exception.StripeOnboardingLinkCreationException;
 import com.rose.payment.account.exception.UserPaymentAccountNotFoundException;
 import com.rose.payment.provider.stripe.exception.InvalidStripeSignatureException;
+import com.rose.user.auth.exception.InvalidRefreshTokenException;
+import com.rose.user.auth.exception.RefreshTokenExpiredException;
 import com.rose.user.exception.EmailAlreadyExistsException;
 import com.rose.user.exception.UsernameAlreadyExistsException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -159,6 +161,32 @@ public class GlobalExceptionHandler {
         log.warn("Donation access denied: path={}, message={}", request.getRequestURI(), exception.getMessage());
         return buildResponse(
                 HttpStatus.FORBIDDEN,
+                exception.getMessage(),
+                request
+        );
+    }
+
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidRefreshTokenException(
+            InvalidRefreshTokenException exception,
+            HttpServletRequest request
+    ) {
+        log.warn("Invalid refresh token: path={}, message={}", request.getRequestURI(), exception.getMessage());
+        return buildResponse(
+                HttpStatus.UNAUTHORIZED,
+                exception.getMessage(),
+                request
+        );
+    }
+
+    @ExceptionHandler(RefreshTokenExpiredException.class)
+    public ResponseEntity<ErrorResponse> handleRefreshTokenExpiredException(
+            RefreshTokenExpiredException exception,
+            HttpServletRequest request
+    ) {
+        log.warn("Refresh token expired: path={}, message={}", request.getRequestURI(), exception.getMessage());
+        return buildResponse(
+                HttpStatus.UNAUTHORIZED,
                 exception.getMessage(),
                 request
         );

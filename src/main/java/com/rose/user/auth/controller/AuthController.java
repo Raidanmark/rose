@@ -6,6 +6,7 @@ import com.rose.user.auth.dto.LoginRequest;
 import com.rose.user.auth.dto.LoginResponse;
 import com.rose.user.auth.dto.RegisterRequest;
 import com.rose.user.auth.service.AuthService;
+import com.rose.user.auth.service.jwt.RefreshTokenCookieService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final RefreshTokenCookieService refreshTokenCookieService;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
@@ -32,7 +34,7 @@ public class AuthController {
         return ResponseEntity.ok()
                 .header(
                         HttpHeaders.SET_COOKIE,
-                        loginDto.refreshToken()
+                        refreshTokenCookieService.create(loginDto.refreshToken()).toString()
                 )
                 .body(
                         loginDto.loginResponse()
@@ -56,7 +58,7 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(
                         HttpHeaders.SET_COOKIE,
-                        loginDto.refreshToken()
+                        refreshTokenCookieService.create(loginDto.refreshToken()).toString()
                 )
                 .body(
                         loginDto.loginResponse()
