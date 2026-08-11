@@ -1,5 +1,8 @@
 package com.rose.user.profile.dto;
 
+import com.rose.user.profile.entity.MediaLink;
+
+import java.util.List;
 import java.util.UUID;
 
 public record ProfileResponse(
@@ -14,6 +17,8 @@ public record ProfileResponse(
 
         String avatarUrl,
 
-        String bannerUrl
+        String bannerUrl,
+
+        List<MediaLink> mediaLinks
 ) {
 }

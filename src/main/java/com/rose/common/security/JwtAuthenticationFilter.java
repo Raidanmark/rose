@@ -10,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -44,13 +46,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
 
         try {
-            if (jwtService.isTokenValid(token)) {
+
+            boolean valid = jwtService.isTokenValid(token);
+
+            log.info("JWT valid: {}", valid);
+
+            if (valid) {
+
                 UUID userId = jwtService.extractUserId(token);
+
+                log.info("JWT userId: {}", userId);
 
                 User user = userRepository.findById(userId)
                         .orElse(null);
 
-                if (user != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                log.info("User found: {}", user != null);
+
+                if (user != null &&
+                        SecurityContextHolder.getContext().getAuthentication() == null) {
+
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
                                     user,
@@ -59,10 +73,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             );
 
                     authentication.setDetails(
-                            new WebAuthenticationDetailsSource().buildDetails(request)
+                            new WebAuthenticationDetailsSource()
+                                    .buildDetails(request)
                     );
 
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    SecurityContextHolder.getContext()
+                            .setAuthentication(authentication);
+
+                    log.info("Authentication successfully set for user {}", userId);
                 }
             }
         } catch (ExpiredJwtException e) {
