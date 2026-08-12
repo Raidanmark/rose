@@ -1,7 +1,6 @@
 package com.rose.donation.repository;
 
 import com.rose.donation.entity.Donation;
-import com.rose.payment.PaymentProvider;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,18 +1,14 @@
 package com.rose.payment.provider.stripe.webhook.service;
 
 import com.rose.donation.service.DonationService;
-import com.rose.payment.account.service.UserPaymentAccountService;
 import com.rose.payment.provider.stripe.config.StripeProperties;
-import com.rose.payment.provider.stripe.connect.StripeConnectGatewayImpl;
-import com.rose.payment.provider.stripe.connect.StripeConnectedAccountSnapshot;
 import com.rose.payment.provider.stripe.exception.InvalidStripeSignatureException;
 import com.rose.payment.provider.stripe.webhook.repository.StripeWebhookEventRepository;
 import com.stripe.exception.SignatureVerificationException;
-import com.stripe.model.Account;
+import com.stripe.model.Event;
 import com.stripe.model.PaymentIntent;
 import com.stripe.model.StripeObject;
 import com.stripe.net.Webhook;
-import com.stripe.model.Event;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,9 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StripeWebhookService {
 
     private final StripeProperties properties;
-    private final UserPaymentAccountService paymentAccountService;
     private final DonationService donationService;
-    private final StripeConnectGatewayImpl stripeConnectGateway;
     private final StripeWebhookEventRepository stripeWebhookEventRepository;
 
     @Transactional
@@ -45,8 +39,6 @@ public class StripeWebhookService {
         }
 
         switch (event.getType()) {
-            case "account.updated" ->
-                    handleAccountUpdated(event);
 
             case "payment_intent.succeeded" ->
                     handlePaymentSucceeded(event);
@@ -90,19 +82,6 @@ public class StripeWebhookService {
         }
     }
 
-    private void handleAccountUpdated(Event event) {
-        Account account = deserialize(event, Account.class);
-
-        StripeConnectedAccountSnapshot snapshot =
-                stripeConnectGateway.toSnapshot(account);
-
-        paymentAccountService.synchronizeFromWebhook(
-                snapshot.accountId(),
-                snapshot.chargesEnabled(),
-                snapshot.payoutsEnabled(),
-                snapshot.disabled()
-        );
-    }
 
     private void handlePaymentSucceeded(Event event) {
         PaymentIntent paymentIntent =

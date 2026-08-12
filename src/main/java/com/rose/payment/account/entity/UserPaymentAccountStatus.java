@@ -1,8 +1,9 @@
 package com.rose.payment.account.entity;
 
 public enum UserPaymentAccountStatus {
-    ONBOARDING,
-    RESTRICTED,
+    NOT_CONNECTED,
+    ONBOARDING_REQUIRED,
+    VERIFYING,
     ACTIVE,
-    DISABLED
+    RESTRICTED
 }
