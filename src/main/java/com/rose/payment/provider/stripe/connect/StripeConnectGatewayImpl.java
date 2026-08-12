@@ -8,6 +8,7 @@ import com.stripe.StripeClient;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Account;
 import com.stripe.model.AccountLink;
+import com.stripe.net.RequestOptions;
 import com.stripe.param.AccountCreateParams;
 import com.stripe.param.AccountLinkCreateParams;
 import lombok.RequiredArgsConstructor;
@@ -44,8 +45,14 @@ public class StripeConnectGatewayImpl implements StripeConnectGateway {
                 )
                 .build();
 
+        RequestOptions requestOptions = RequestOptions.builder()
+                .setIdempotencyKey(
+                        "rose-connect-account-" + user.getId()
+                )
+                .build();
+
         try {
-            return stripeClient.accounts().create(params).getId();
+            return stripeClient.accounts().create(params, requestOptions).getId();
         } catch (StripeException exception) {
             throw new StripeIntegrationException(
                     user.getId(),

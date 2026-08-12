@@ -53,16 +53,6 @@ public class UserPaymentAccount {
     @Column(name = "provider_account_id", nullable = false)
     private String providerAccountId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 32)
-    private UserPaymentAccountStatus status;
-
-    @Column(name = "charges_enabled", nullable = false)
-    private boolean chargesEnabled;
-
-    @Column(name = "payouts_enabled", nullable = false)
-    private boolean payoutsEnabled;
-
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -80,32 +70,6 @@ public class UserPaymentAccount {
         account.user = user;
         account.provider = provider;
         account.providerAccountId = providerAccountId;
-        account.status = UserPaymentAccountStatus.ONBOARDING;
-        account.chargesEnabled = false;
-        account.payoutsEnabled = false;
         return account;
-    }
-
-    public void synchronize(
-            boolean chargeEnabled,
-            boolean payoutsEnabled,
-            boolean disabled
-    ) {
-        this.chargesEnabled = chargeEnabled;
-        this.payoutsEnabled = payoutsEnabled;
-
-        if (disabled) {
-            this.status = UserPaymentAccountStatus.DISABLED;
-        } else if (chargeEnabled && payoutsEnabled) {
-            this.status = UserPaymentAccountStatus.ACTIVE;
-        } else {
-            this.status = UserPaymentAccountStatus.ONBOARDING;
-        }
-    }
-
-    public boolean canReceiveDonations() {
-        return status == UserPaymentAccountStatus.ACTIVE
-                && chargesEnabled
-                && payoutsEnabled;
     }
 }
