@@ -17,7 +17,7 @@ public class RefreshTokenCookieService {
                 .httpOnly(true)
                 .secure(false)
                 .sameSite("Lax")
-                .path("/auth")
+                .path("/")
                 .maxAge(Duration.ofDays(refreshTokenCookieDuration))
                 .build();
     }
